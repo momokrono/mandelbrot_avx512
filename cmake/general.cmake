@@ -5,10 +5,10 @@ include_guard()
 # Default build type
 if (NOT CMAKE_BUILD_TYPE)
     message(
-        STATUS "Setting build type to default 'RelWithDebInfo' ")
+            STATUS "Setting build type to default 'RelWithDebInfo' ")
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build: " FORCE)
     set_property(
-        CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo"
+            CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo"
     )
 endif()
 
@@ -47,15 +47,15 @@ function(enable_sanitizers target_name)
             list(APPEND SANITIZERS "address")
         endif()
 
-        string(TOUPPER "ENABLE_SANITIZER_MEMORY_FOR_${target_name}" ENABLE_SANITIZER_MEMORY)
-        option(${ENABLE_SANITIZER_MEMORY} "Enable memory sanitizer for ${target_name}" FALSE)
-        if (${ENABLE_SANITIZER_MEMORY})
-            list(APPEND SANITIZERS "memory")
+        string(TOUPPER "ENABLE_SANITIZER_LEAK_FOR_${target_name}" ENABLE_SANITIZER_LEAK)
+        option(${ENABLE_SANITIZER_LEAK} "Enable leak sanitizer for ${target_name}" FALSE)
+        if (${ENABLE_SANITIZER_LEAK})
+            list(APPEND SANITIZERS "leak")
         endif()
 
         string(TOUPPER "ENABLE_SANITIZER_UNDEFINED_BEHAVIOR_FOR_${target_name}" ENABLE_SANITIZER_UB)
         option(
-            ${ENABLE_SANITIZER_UB} "Enable undefined behavior sanitizer for ${target_name}" FALSE
+                ${ENABLE_SANITIZER_UB} "Enable undefined behavior sanitizer for ${target_name}" FALSE
         )
         if(${ENABLE_SANITIZER_UB})
             list(APPEND SANITIZERS "undefined")
@@ -72,8 +72,9 @@ function(enable_sanitizers target_name)
 
     if(LIST_OF_SANITIZERS)
         if(NOT "${LIST_OF_SANITIZERS}" STREQUAL "")
-            target_compile_options(${target_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
-            target_link_libraries(${target_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
+            target_compile_options(${target_name} PRIVATE -fsanitize=${LIST_OF_SANITIZERS})
+            target_link_libraries(${target_name} PRIVATE -fsanitize=${LIST_OF_SANITIZERS})
+            message("Enabling sanitizers for project '${target_name}': ${LIST_OF_SANITIZERS}")
         endif()
     endif()
 endfunction()
